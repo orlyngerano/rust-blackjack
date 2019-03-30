@@ -163,12 +163,7 @@ impl Player {
     }
 
     fn get_cards_points(&self) -> u8 {
-        let mut points: u8 = 0;
-
-        for card in &self.cards {
-            points = points +  cards::get_card_value(card);
-        }
-        points
+        return self.cards.iter().fold(0, | acc, x| acc + cards::get_card_value(x));
     }
 
     fn get_name(&self) -> &String {
@@ -247,18 +242,19 @@ impl BlackJack {
         let player_points:u8 = self.player.get_cards_points();
         let dealer_points:u8 = self.dealer.get_cards_points();
 
-        if player_points > 21 {
-            return GameRoundResult::PlayerBusted;
+        let result = if player_points > 21 {
+            GameRoundResult::PlayerBusted
         }else if dealer_points > 21 {
-            return GameRoundResult::DealerBusted;
+            GameRoundResult::DealerBusted
         }else if player_points > dealer_points{
-            return GameRoundResult::PlayerWon;
+            GameRoundResult::PlayerWon
         }else if player_points < dealer_points{
-            return GameRoundResult::DealerWon;
+            GameRoundResult::DealerWon
         }else{
-            return GameRoundResult::Draw;
-        }
+            GameRoundResult::Draw
+        };
 
+        result
     }
 
     fn player_hit_card(&mut self){
@@ -343,15 +339,13 @@ impl BlackJack {
         if self.card_deck.is_empty() {
             self.set_card_deck();
         }
-        let card:cards::Card = self.card_deck.remove(0);
-        card
+        return self.card_deck.remove(0);
     }
 
     fn is_dealer_want_to_hit(&self) -> bool{
-        if self.dealer.get_cards_points() < BlackJack::DEALER_SOFTPOINTS {
-            return true;
-        }else{
-            return false;
+        match self.dealer.get_cards_points() {
+            points if points < BlackJack::DEALER_SOFTPOINTS => true,
+            _ => false
         }
     }         
 
@@ -513,10 +507,10 @@ impl BlackJackConsole{
 
     fn show_player_card_message(&self){
         let player_cards: &Vec<cards::Card> = self.black_jack.get_player().get_cards();
-        let mut message: String = String::new();
-        for card in player_cards{
-            message.push_str(&format!("{} {}\n", cards::get_card_name(card), cards::get_card_value(card)));
-        }
+        let message = player_cards.iter().fold(String::new(), |mut acc, x| {
+            acc.push_str(&format!("{} {}\n", cards::get_card_name(x), cards::get_card_value(x)));
+            acc
+        });
         println!("{}", message);
     }
 
