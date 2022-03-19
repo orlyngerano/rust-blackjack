@@ -1,5 +1,6 @@
 
 extern crate rand;
+use rand::distributions::WeightedIndex;
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 
@@ -16,12 +17,17 @@ pub struct BlackJack {
 
 impl BlackJack {
     const DEALER_SOFTPOINTS: u8 = 17;
+    const DEALER_NAMES: [&'static str; 4] = ["Anthony", "Bella", "Bob", "Jessy"];
+
+
 
     pub fn new(player: Player) -> BlackJack {
-
+        let mut rng = thread_rng();
+        let dealer_name = BlackJack::DEALER_NAMES.choose(&mut rng).unwrap_or(&&"Unknown");
+     
         BlackJack {
             state: State::GameStart,
-            dealer: Player::new("Anthony".to_string()),
+            dealer: Player::new(dealer_name.to_string()),
             player: player,
             card_deck: Vec::new()
         }

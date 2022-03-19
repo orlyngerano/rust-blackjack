@@ -80,9 +80,13 @@ impl BlackJackConsole{
    }
 
    fn show_greetings(&self){
-       println!("Black Jack Game");
+       println!(r#"
+---------------
+Black Jack Game
+---------------
+"#);
        println!("Welcome {}", self.black_jack.get_player().get_name());
-       println!("I am {}", self.black_jack.get_dealer().get_name());
+       println!("I am will be dealer. My name is {}.\n", self.black_jack.get_dealer().get_name());
    }    
 
    fn show_exit_message(&self){
