@@ -30,7 +30,7 @@ impl Player {
     }
 
     pub fn get_cards_points(&self) -> u8 {
-        return self.cards.iter().fold(0, | acc, x| acc + cards::get_card_value(x));
+         self.cards.iter().fold(0, | acc, x| acc + cards::get_card_value(x))
     }
 
     pub fn get_name(&self) -> &String {
