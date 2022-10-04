@@ -55,19 +55,15 @@ impl BlackJack {
     }
 
     pub fn get_winner(&self) -> GameRoundResult{
-        let player_points:u8 = self.player.get_cards_points();
-        let dealer_points:u8 = self.dealer.get_cards_points();
+        let player_points = self.player.get_cards_points();
+        let dealer_points = self.dealer.get_cards_points();
 
-        let result = if player_points > 21 {
-            GameRoundResult::PlayerBusted
-        }else if dealer_points > 21 {
-            GameRoundResult::DealerBusted
-        }else if player_points > dealer_points{
-            GameRoundResult::PlayerWon
-        }else if player_points < dealer_points{
-            GameRoundResult::DealerWon
-        }else{
-            GameRoundResult::Draw
+        let result = match (player_points, dealer_points){
+            (p, _d) if p > 21 => GameRoundResult::PlayerBusted,
+            (_p, d) if d > 21 => GameRoundResult::DealerBusted,
+            (p, d) if p > d => GameRoundResult::PlayerWon,
+            (p, d) if d > p => GameRoundResult::DealerWon,
+            _ => GameRoundResult::Draw            
         };
 
         result
@@ -99,21 +95,21 @@ impl BlackJack {
     }
 
     pub fn start_game_round(&mut self){
-        self.player.empty_cards();
-        self.dealer.empty_cards();
-        self.player.set_bet_on_cards(false);
-        self.dealer.set_bet_on_cards(false);
+
+        for p in [&mut self.player, &mut self.dealer] {
+            p.empty_cards();
+            p.set_bet_on_cards(false);
+        }
 
         self.state = State::GameRoundStart;
 
-        let mut card:cards::Card = self.get_next_card_from_deck();
-        self.player.add_card(card);
-        card = self.get_next_card_from_deck();
-        self.dealer.add_card(card);
-        card = self.get_next_card_from_deck();
-        self.player.add_card(card);
-        card = self.get_next_card_from_deck();
-        self.dealer.add_card(card);
+        for i in 1..=4 {
+            let card = self.get_next_card_from_deck();
+            match i % 2 {
+                0 => self.player.add_card(card),
+                _ => self.dealer.add_card(card)
+            }
+        }
 
         self.state = State::PlayerTurn
     }
@@ -135,20 +131,22 @@ impl BlackJack {
         }
 
         
-        if self.dealer.get_cards_points() > 21 ||  self.player.get_cards_points() > 21{
-            self.end_game_round();
-        } else {
-            if self.player.is_bet_on_cards() && self.dealer.is_bet_on_cards() {
-                self.end_game_round();
-            } else {
-                if self.player.is_bet_on_cards(){
-                    self.dealers_turn();
-                } else{
-                    self.state = State::PlayerTurn;
-                }
+        let dealer_points = self.dealer.get_cards_points();
+        let player_points = self.player.get_cards_points();
+        let is_player_betting = self.player.is_bet_on_cards();
+        let is_dealer_betting = self.dealer.is_bet_on_cards();
+
+        match (dealer_points, player_points) {
+            (d, p) if d > 21 || p > 21 => self.end_game_round(),
+            _ => match (is_player_betting, is_dealer_betting) {
+                (c, d) if c && d => self.end_game_round(),
+                (c, d) if c && !d => self.dealers_turn(),
+                _ => self.state = State::PlayerTurn
             }
         }
         
+
+
     }
 
     fn get_next_card_from_deck(&mut self) -> cards::Card{
