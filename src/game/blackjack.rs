@@ -1,12 +1,11 @@
-
 extern crate rand;
 use rand::distributions::WeightedIndex;
-use rand::thread_rng;
 use rand::seq::SliceRandom;
+use rand::thread_rng;
 
 use super::cards;
 use super::player::Player;
-use super::status::{State, GameRoundResult};
+use super::status::{GameRoundResult, State};
 
 pub struct BlackJack {
     state: State,
@@ -19,57 +18,56 @@ impl BlackJack {
     const DEALER_SOFTPOINTS: u8 = 17;
     const DEALER_NAMES: [&'static str; 4] = ["Anthony", "Bella", "Bob", "Jessy"];
 
-
-
     pub fn new(player: Player) -> BlackJack {
         let mut rng = thread_rng();
-        let dealer_name = BlackJack::DEALER_NAMES.choose(&mut rng).unwrap_or(&&"Unknown");
-     
+        let dealer_name = BlackJack::DEALER_NAMES
+            .choose(&mut rng)
+            .unwrap_or(&&"Unknown");
+
         BlackJack {
             state: State::GameStart,
             dealer: Player::new(dealer_name.to_string()),
             player: player,
-            card_deck: Vec::new()
+            card_deck: Vec::new(),
         }
-    }    
+    }
 
-    pub fn end_game(&mut self){
+    pub fn end_game(&mut self) {
         self.state = State::GameEnd;
     }
 
-    
-    fn end_game_round(&mut self){
+    fn end_game_round(&mut self) {
         self.state = State::GameRoundEnd;
     }
-    
-    pub fn get_dealer(&self) -> &Player{
+
+    pub fn get_dealer(&self) -> &Player {
         return &self.dealer;
     }
-    
-    pub fn get_player(&self) -> &Player{
+
+    pub fn get_player(&self) -> &Player {
         return &self.player;
     }
-    
-    pub fn get_state(&self) -> &State{
+
+    pub fn get_state(&self) -> &State {
         return &self.state;
     }
 
-    pub fn get_winner(&self) -> GameRoundResult{
+    pub fn get_winner(&self) -> GameRoundResult {
         let player_points = self.player.get_cards_points();
         let dealer_points = self.dealer.get_cards_points();
 
-        let result = match (player_points, dealer_points){
+        let result = match (player_points, dealer_points) {
             (p, _d) if p > 21 => GameRoundResult::PlayerBusted,
             (_p, d) if d > 21 => GameRoundResult::DealerBusted,
             (p, d) if p > d => GameRoundResult::PlayerWon,
             (p, d) if d > p => GameRoundResult::DealerWon,
-            _ => GameRoundResult::Draw            
+            _ => GameRoundResult::Draw,
         };
 
         result
     }
 
-    pub fn player_hit_card(&mut self){
+    pub fn player_hit_card(&mut self) {
         if self.state != State::PlayerTurn {
             return;
         }
@@ -80,22 +78,21 @@ impl BlackJack {
         self.dealers_turn();
     }
 
-    pub fn player_stand(&mut self){
+    pub fn player_stand(&mut self) {
         if self.state != State::PlayerTurn {
-            return
+            return;
         }
         self.player.set_bet_on_cards(true);
         self.state = State::DealerTurn;
         self.dealers_turn();
     }
 
-    pub fn start_game(&mut self){
+    pub fn start_game(&mut self) {
         self.set_card_deck();
         self.state = State::GameStart;
     }
 
-    pub fn start_game_round(&mut self){
-
+    pub fn start_game_round(&mut self) {
         for p in [&mut self.player, &mut self.dealer] {
             p.empty_cards();
             p.set_bet_on_cards(false);
@@ -107,19 +104,19 @@ impl BlackJack {
             let card = self.get_next_card_from_deck();
             match i % 2 {
                 0 => self.player.add_card(card),
-                _ => self.dealer.add_card(card)
+                _ => self.dealer.add_card(card),
             }
         }
 
         self.state = State::PlayerTurn
     }
 
-    fn dealer_hit_card(&mut self){
+    fn dealer_hit_card(&mut self) {
         let card = self.get_next_card_from_deck();
         self.dealer.add_card(card);
     }
 
-    fn dealers_turn(&mut self){
+    fn dealers_turn(&mut self) {
         if self.state != State::DealerTurn {
             return;
         }
@@ -130,7 +127,6 @@ impl BlackJack {
             self.dealer.set_bet_on_cards(true);
         }
 
-        
         let dealer_points = self.dealer.get_cards_points();
         let player_points = self.player.get_cards_points();
         let is_player_betting = self.player.is_bet_on_cards();
@@ -141,92 +137,90 @@ impl BlackJack {
             _ => match (is_player_betting, is_dealer_betting) {
                 (c, d) if c && d => self.end_game_round(),
                 (c, d) if c && !d => self.dealers_turn(),
-                _ => self.state = State::PlayerTurn
-            }
+                _ => self.state = State::PlayerTurn,
+            },
         }
-        
-
-
     }
 
-    fn get_next_card_from_deck(&mut self) -> cards::Card{
+    fn get_next_card_from_deck(&mut self) -> cards::Card {
         if self.card_deck.is_empty() {
             self.set_card_deck();
         }
         return self.card_deck.remove(0);
     }
 
-    fn is_dealer_want_to_hit(&self) -> bool{
+    fn is_dealer_want_to_hit(&self) -> bool {
         match self.dealer.get_cards_points() {
             points if points < BlackJack::DEALER_SOFTPOINTS => true,
-            _ => false
+            _ => false,
         }
-    }         
-
-    fn set_card_deck(&mut self){
-        self.card_deck.clear();
-        self.card_deck.push(cards::Card::ClubsAce);
-        self.card_deck.push(cards::Card::ClubsTwo);
-        self.card_deck.push(cards::Card::ClubsThree);
-        self.card_deck.push(cards::Card::ClubsFour);
-        self.card_deck.push(cards::Card::ClubsFive);
-        self.card_deck.push(cards::Card::ClubsSix);
-        self.card_deck.push(cards::Card::ClubsSeven);
-        self.card_deck.push(cards::Card::ClubsEight);
-        self.card_deck.push(cards::Card::ClubsNine);
-        self.card_deck.push(cards::Card::ClubsTen);
-        self.card_deck.push(cards::Card::ClubsJack);
-        self.card_deck.push(cards::Card::ClubsQueen);
-        self.card_deck.push(cards::Card::ClubsKing);
-
-        self.card_deck.push(cards::Card::DiamondsAce);
-        self.card_deck.push(cards::Card::DiamondsTwo);
-        self.card_deck.push(cards::Card::DiamondsThree);
-        self.card_deck.push(cards::Card::DiamondsFour);
-        self.card_deck.push(cards::Card::DiamondsFive);
-        self.card_deck.push(cards::Card::DiamondsSix);
-        self.card_deck.push(cards::Card::DiamondsSeven);
-        self.card_deck.push(cards::Card::DiamondsEight);
-        self.card_deck.push(cards::Card::DiamondsNine);
-        self.card_deck.push(cards::Card::DiamondsTen);
-        self.card_deck.push(cards::Card::DiamondsJack);
-        self.card_deck.push(cards::Card::DiamondsQueen);
-        self.card_deck.push(cards::Card::DiamondsKing);    
-
-        self.card_deck.push(cards::Card::HeartsAce);
-        self.card_deck.push(cards::Card::HeartsTwo);
-        self.card_deck.push(cards::Card::HeartsThree);
-        self.card_deck.push(cards::Card::HeartsFour);
-        self.card_deck.push(cards::Card::HeartsFive);
-        self.card_deck.push(cards::Card::HeartsSix);
-        self.card_deck.push(cards::Card::HeartsSeven);
-        self.card_deck.push(cards::Card::HeartsEight);
-        self.card_deck.push(cards::Card::HeartsNine);
-        self.card_deck.push(cards::Card::HeartsTen);
-        self.card_deck.push(cards::Card::HeartsJack);
-        self.card_deck.push(cards::Card::HeartsQueen);
-        self.card_deck.push(cards::Card::HeartsKing); 
-
-        self.card_deck.push(cards::Card::SpadesAce);
-        self.card_deck.push(cards::Card::SpadesTwo);
-        self.card_deck.push(cards::Card::SpadesThree);
-        self.card_deck.push(cards::Card::SpadesFour);
-        self.card_deck.push(cards::Card::SpadesFive);
-        self.card_deck.push(cards::Card::SpadesSix);
-        self.card_deck.push(cards::Card::SpadesSeven);
-        self.card_deck.push(cards::Card::SpadesEight);
-        self.card_deck.push(cards::Card::SpadesNine);
-        self.card_deck.push(cards::Card::SpadesTen);
-        self.card_deck.push(cards::Card::SpadesJack);
-        self.card_deck.push(cards::Card::SpadesQueen);
-        self.card_deck.push(cards::Card::SpadesKing);       
-
-         self.shuffle_deck();   
     }
 
-    fn shuffle_deck(&mut self){
+    fn set_card_deck(&mut self) {
+        self.card_deck.clear();
+
+        for card in [
+            cards::Card::ClubsAce,
+            cards::Card::ClubsTwo,
+            cards::Card::ClubsThree,
+            cards::Card::ClubsFour,
+            cards::Card::ClubsFive,
+            cards::Card::ClubsSix,
+            cards::Card::ClubsSeven,
+            cards::Card::ClubsEight,
+            cards::Card::ClubsNine,
+            cards::Card::ClubsTen,
+            cards::Card::ClubsJack,
+            cards::Card::ClubsQueen,
+            cards::Card::ClubsKing,
+            cards::Card::DiamondsAce,
+            cards::Card::DiamondsTwo,
+            cards::Card::DiamondsThree,
+            cards::Card::DiamondsFour,
+            cards::Card::DiamondsFive,
+            cards::Card::DiamondsSix,
+            cards::Card::DiamondsSeven,
+            cards::Card::DiamondsEight,
+            cards::Card::DiamondsNine,
+            cards::Card::DiamondsTen,
+            cards::Card::DiamondsJack,
+            cards::Card::DiamondsQueen,
+            cards::Card::DiamondsKing,
+            cards::Card::HeartsAce,
+            cards::Card::HeartsTwo,
+            cards::Card::HeartsThree,
+            cards::Card::HeartsFour,
+            cards::Card::HeartsFive,
+            cards::Card::HeartsSix,
+            cards::Card::HeartsSeven,
+            cards::Card::HeartsEight,
+            cards::Card::HeartsNine,
+            cards::Card::HeartsTen,
+            cards::Card::HeartsJack,
+            cards::Card::HeartsQueen,
+            cards::Card::HeartsKing,
+            cards::Card::SpadesAce,
+            cards::Card::SpadesTwo,
+            cards::Card::SpadesThree,
+            cards::Card::SpadesFour,
+            cards::Card::SpadesFive,
+            cards::Card::SpadesSix,
+            cards::Card::SpadesSeven,
+            cards::Card::SpadesEight,
+            cards::Card::SpadesNine,
+            cards::Card::SpadesTen,
+            cards::Card::SpadesJack,
+            cards::Card::SpadesQueen,
+            cards::Card::SpadesKing,
+        ] {
+            self.card_deck.push(card);
+        }
+
+        self.shuffle_deck();
+    }
+
+    fn shuffle_deck(&mut self) {
         let mut rng = thread_rng();
         self.card_deck.shuffle(&mut rng);
     }
-
 }
