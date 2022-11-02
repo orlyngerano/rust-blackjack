@@ -1,6 +1,5 @@
 use super::cards;
 
-
 pub struct Player {
     name: String,
     cards: Vec<cards::Card>,
@@ -8,12 +7,11 @@ pub struct Player {
 }
 
 impl Player {
-
     pub fn new(name: String) -> Player {
         Player {
             name: name,
             cards: Vec::new(),
-            bet_on_cards: false
+            bet_on_cards: false,
         }
     }
 
@@ -30,7 +28,9 @@ impl Player {
     }
 
     pub fn get_cards_points(&self) -> u8 {
-         self.cards.iter().fold(0, | acc, x| acc + cards::get_card_value(x))
+        self.cards
+            .iter()
+            .fold(0, |acc, x| acc + cards::get_card_value(x))
     }
 
     pub fn get_name(&self) -> &String {

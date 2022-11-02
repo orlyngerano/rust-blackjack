@@ -41,22 +41,22 @@ impl BlackJack {
     }
 
     pub fn get_dealer(&self) -> &Player {
-        return &self.dealer;
+        &self.dealer
     }
 
     pub fn get_player(&self) -> &Player {
-        return &self.player;
+        &self.player
     }
 
     pub fn get_state(&self) -> &State {
-        return &self.state;
+        &self.state
     }
 
     pub fn get_winner(&self) -> GameRoundResult {
         let player_points = self.player.get_cards_points();
         let dealer_points = self.dealer.get_cards_points();
 
-        let result = match (player_points, dealer_points) {
+        let winner = match (player_points, dealer_points) {
             (p, _d) if p > 21 => GameRoundResult::PlayerBusted,
             (_p, d) if d > 21 => GameRoundResult::DealerBusted,
             (p, d) if p > d => GameRoundResult::PlayerWon,
@@ -64,7 +64,7 @@ impl BlackJack {
             _ => GameRoundResult::Draw,
         };
 
-        result
+        winner
     }
 
     pub fn player_hit_card(&mut self) {
@@ -108,7 +108,7 @@ impl BlackJack {
             }
         }
 
-        self.state = State::PlayerTurn
+        self.state = State::PlayerTurn;
     }
 
     fn dealer_hit_card(&mut self) {
@@ -146,7 +146,7 @@ impl BlackJack {
         if self.card_deck.is_empty() {
             self.set_card_deck();
         }
-        return self.card_deck.remove(0);
+        self.card_deck.remove(0)
     }
 
     fn is_dealer_want_to_hit(&self) -> bool {
