@@ -1,7 +1,6 @@
 
     #[derive(Copy, Clone)]
     pub enum Card {
-        NoCard = 0x00,
         ClubsAce = 0x01,
         ClubsTwo = 0x02,
         ClubsThree = 0x03,
@@ -58,7 +57,6 @@
 
     pub fn get_card_name(card: &Card) -> String {
         let name = match card {
-            Card::NoCard => String::from("nocard"),
             Card::ClubsAce => String::from("ace of Clubs"),
             Card::ClubsTwo => String::from("two of Clubs"),
             Card::ClubsThree => String::from("three of Clubs"),
