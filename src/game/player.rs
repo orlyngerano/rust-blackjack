@@ -28,9 +28,12 @@ impl Player {
     }
 
     pub fn get_cards_points(&self) -> u8 {
-        self.cards
+        let points = self
+            .cards
             .iter()
-            .fold(0, |acc, x| acc + cards::get_card_value(x))
+            .fold(0, |acc, x| acc + cards::get_card_value(x));
+
+        points
     }
 
     pub fn get_name(&self) -> &String {
