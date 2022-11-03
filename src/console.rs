@@ -17,28 +17,46 @@ impl BlackJackConsole {
         }
     }
 
+    fn game_round_loop(&mut self) {
+        loop {
+            match *self.black_jack.get_state() {
+                State::GameRoundEnd => break,
+                _ => {
+                    self.show_player_card_message();
+                    match BlackJackConsole::ask_player_play_to_hit_or_stand() {
+                        true => self.black_jack.player_hit_card(),
+                        false => self.black_jack.player_stand(),
+                    }
+                }
+            }
+        }
+    }
+
+    fn game_session_loop(&mut self) {
+        loop {
+            match *self.black_jack.get_state() {
+                State::GameEnd => break,
+                _ => match BlackJackConsole::ask_player_play() {
+                    true => {
+                        self.black_jack.start_game_round();
+
+                        self.game_round_loop();
+
+                        self.show_player_card_message();
+                        self.show_game_round_result_message();
+                    }
+                    false => self.black_jack.end_game(),
+                },
+            }
+        }
+    }
+
     pub fn play(&mut self) {
         self.show_greetings();
 
         self.black_jack.start_game();
 
-        while *self.black_jack.get_state() != State::GameEnd {
-            if BlackJackConsole::ask_player_play() {
-                self.black_jack.start_game_round();
-                while *self.black_jack.get_state() != State::GameRoundEnd {
-                    self.show_player_card_message();
-                    if BlackJackConsole::ask_player_play_to_hit_or_stand() {
-                        self.black_jack.player_hit_card();
-                    } else {
-                        self.black_jack.player_stand();
-                    }
-                }
-                self.show_player_card_message();
-                self.show_game_round_result_message();
-            } else {
-                self.black_jack.end_game();
-            }
-        }
+        self.game_session_loop();
 
         self.show_exit_message();
     }
@@ -134,7 +152,7 @@ Black Jack Game
                 "Draw. Dealer:{}  Player:{}",
                 self.black_jack.get_dealer().get_cards_points(),
                 self.black_jack.get_player().get_cards_points()
-            )
+            ),
         };
 
         println!("{}", winner);
