@@ -11,9 +11,9 @@ pub struct BlackJackConsole {
 }
 
 impl BlackJackConsole {
-    pub fn new(name: String) -> BlackJackConsole {
+    pub fn new(player_name: String, dealer_name: String, soft_points: u8) -> BlackJackConsole {
         BlackJackConsole {
-            black_jack: BlackJack::new(Player::new(name)),
+            black_jack: BlackJack::new(Player::new(player_name),Player::new(dealer_name), soft_points),
         }
     }
 

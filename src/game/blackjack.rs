@@ -12,23 +12,19 @@ pub struct BlackJack {
     dealer: Player,
     player: Player,
     card_deck: Vec<cards::Card>,
+    soft_points: u8
 }
 
 impl BlackJack {
-    const DEALER_SOFTPOINTS: u8 = 17;
-    const DEALER_NAMES: [&'static str; 4] = ["Anthony", "Bella", "Bob", "Jessy"];
 
-    pub fn new(player: Player) -> BlackJack {
-        let mut rng = thread_rng();
-        let dealer_name = BlackJack::DEALER_NAMES
-            .choose(&mut rng)
-            .unwrap_or(&&"Unknown");
+    pub fn new(player: Player, dealer: Player, soft_points: u8) -> BlackJack {
 
         BlackJack {
             state: State::GameStart,
-            dealer: Player::new(dealer_name.to_string()),
-            player: player,
+            dealer,
+            player,
             card_deck: Vec::new(),
+            soft_points
         }
     }
 
@@ -151,7 +147,7 @@ impl BlackJack {
 
     fn is_dealer_want_to_hit(&self) -> bool {
         match self.dealer.get_cards_points() {
-            points if points < BlackJack::DEALER_SOFTPOINTS => true,
+            points if points < self.soft_points => true,
             _ => false,
         }
     }
