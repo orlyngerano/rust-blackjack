@@ -1,5 +1,5 @@
 pub mod console;
-mod game;
+pub mod game;
 
 
 

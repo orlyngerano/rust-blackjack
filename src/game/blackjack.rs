@@ -7,6 +7,8 @@ use super::cards;
 use super::player::Player;
 use super::status::{GameRoundResult, State};
 
+pub const DEFAULT_SOFTPOINTS:u8 = 17;
+
 pub struct BlackJack {
     state: State,
     dealer: Player,

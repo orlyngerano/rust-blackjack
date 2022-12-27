@@ -1,4 +1,4 @@
-use blackjack::console::BlackJackConsole;
+use blackjack::{console::BlackJackConsole, game};
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -13,7 +13,7 @@ struct Args{
     player: String,
     
     /// Softpoints
-    #[arg(short, long, default_value_t = 17)]
+    #[arg(short, long, default_value_t = game::blackjack::DEFAULT_SOFTPOINTS)]
     softpoints: u8,    
 }
 
