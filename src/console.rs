@@ -97,7 +97,7 @@ impl BlackJackConsole {
         choiced
     }
 
-    fn show_greetings(&self) {
+    fn show_greetings(&mut self) {
         println!(
             r#"
 ---------------
@@ -112,14 +112,14 @@ Black Jack Game
         );
     }
 
-    fn show_exit_message(&self) {
+    fn show_exit_message(&mut self) {
         println!(
             "Thanks for playing. Bye {}",
             self.black_jack.get_player().get_name()
         );
     }
 
-    fn show_player_card_message(&self) {
+    fn show_player_card_message(&mut self) {
         let player_cards: &Vec<cards::Card> = self.black_jack.get_player().get_cards();
         let message = player_cards.iter().fold(String::new(), |mut acc, x| {
             acc.push_str(&format!(
@@ -132,7 +132,7 @@ Black Jack Game
         println!("{}", message);
     }
 
-    fn show_game_round_result_message(&self) {
+    fn show_game_round_result_message(&mut self) {
         println!("-----Game Result-----");
 
         let winner = match self.black_jack.get_winner() {
