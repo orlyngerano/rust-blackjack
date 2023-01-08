@@ -1,3 +1,4 @@
+#[derive(PartialEq)]
 pub enum GameRoundResult {
     PlayerBusted,
     DealerBusted,
