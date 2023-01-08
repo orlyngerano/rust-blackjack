@@ -38,12 +38,12 @@ impl BlackJack {
         self.state = State::GameRoundEnd;
     }
 
-    pub fn get_dealer(&self) -> &Player {
-        &self.dealer
+    pub fn get_dealer(&mut self) -> &mut Player {
+        &mut self.dealer
     }
 
-    pub fn get_player(&self) -> &Player {
-        &self.player
+    pub fn get_player(&mut self) -> &mut Player {
+        &mut self.player
     }
 
     pub fn get_state(&self) -> &State {
