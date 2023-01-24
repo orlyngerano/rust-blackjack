@@ -1,21 +1,35 @@
 # Blackjack
 
-Console game in Rust.
+Terminal based game.
 
-## Getting Started
 
-### Dependencies
+## Usage
 
-- Rust compiler.
 
-### Installing
+##### Starts the game.
+```
+% ./blackjack
+```
 
-- git clone https://github.com/orlyngerano/rust-blackjack.git
+##### Show more options when running the game.
+```
+% ./blackjack --help
+```
 
-### Executing program
+## Installing Build Tools
 
-- Build and run
+Follow Rust installation [Guide](https://www.rust-lang.org/tools/install)
+
+## Building
 
 ```
-cargo run
+cargo build --release
+```
+The built file is located in directory **target/release**.
+
+
+## Testing
+
+```
+cargo test
 ```
