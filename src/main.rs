@@ -3,7 +3,7 @@ use clap::Parser;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
-struct Args{
+struct Args {
     /// Name of the dealer
     #[arg(short, long, default_value_t = String::from("Dealer"))]
     dealer: String,
@@ -11,10 +11,10 @@ struct Args{
     /// Name of the player
     #[arg(short, long, default_value_t =  String::from("Player"))]
     player: String,
-    
+
     /// Softpoints
     #[arg(short, long, default_value_t = game::blackjack::DEFAULT_SOFTPOINTS)]
-    softpoints: u8,    
+    softpoints: u8,
 }
 
 fn main() {

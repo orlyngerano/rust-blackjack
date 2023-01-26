@@ -1,4 +1,3 @@
-
 #[derive(Copy, Clone)]
 pub enum Card {
     ClubsAce = 0x01,

@@ -7,26 +7,24 @@ use super::cards;
 use super::player::Player;
 use super::status::{GameRoundResult, State};
 
-pub const DEFAULT_SOFTPOINTS:u8 = 17;
+pub const DEFAULT_SOFTPOINTS: u8 = 17;
 
 pub struct BlackJack {
     state: State,
     dealer: Player,
     player: Player,
     card_deck: Vec<cards::Card>,
-    soft_points: u8
+    soft_points: u8,
 }
 
 impl BlackJack {
-
     pub fn new(player: Player, dealer: Player, soft_points: u8) -> BlackJack {
-
         BlackJack {
             state: State::GameStart,
             dealer,
             player,
             card_deck: Vec::new(),
-            soft_points
+            soft_points,
         }
     }
 
