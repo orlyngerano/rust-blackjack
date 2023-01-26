@@ -1,4 +1,4 @@
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum GameRoundResult {
     PlayerBusted,
     DealerBusted,
@@ -7,7 +7,7 @@ pub enum GameRoundResult {
     Draw,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum State {
     GameStart,
     GameEnd,

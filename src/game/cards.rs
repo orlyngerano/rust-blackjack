@@ -55,7 +55,7 @@ pub enum Card {
 }
 
 pub fn get_card_name(card: &Card) -> String {
-    let name = match card {
+    match card {
         Card::ClubsAce => String::from("ace of Clubs"),
         Card::ClubsTwo => String::from("two of Clubs"),
         Card::ClubsThree => String::from("three of Clubs"),
@@ -108,14 +108,11 @@ pub fn get_card_name(card: &Card) -> String {
         Card::SpadesJack => String::from("jack of Spades"),
         Card::SpadesQueen => String::from("queen of Spades"),
         Card::SpadesKing => String::from("king of Spades"),
-    };
-
-    name
+    }
 }
 
 pub fn get_card_value(card: &Card) -> u8 {
     let unmask_card: u8 = 0x0f & *card as u8;
-    let value = if unmask_card > 10 { 10 } else { unmask_card };
 
-    value
+    if unmask_card > 10 { 10 } else { unmask_card }
 }

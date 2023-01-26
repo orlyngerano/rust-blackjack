@@ -9,7 +9,7 @@ pub struct Player {
 impl Player {
     pub fn new(name: String) -> Player {
         Player {
-            name: name,
+            name,
             cards: Vec::new(),
             bet_on_cards: false,
         }
