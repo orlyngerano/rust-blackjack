@@ -7,26 +7,24 @@ use super::cards;
 use super::player::Player;
 use super::status::{GameRoundResult, State};
 
-pub const DEFAULT_SOFTPOINTS:u8 = 17;
+pub const DEFAULT_SOFTPOINTS: u8 = 17;
 
 pub struct BlackJack {
     state: State,
     dealer: Player,
     player: Player,
     card_deck: Vec<cards::Card>,
-    soft_points: u8
+    soft_points: u8,
 }
 
 impl BlackJack {
-
     pub fn new(player: Player, dealer: Player, soft_points: u8) -> BlackJack {
-
         BlackJack {
             state: State::GameStart,
             dealer,
             player,
             card_deck: Vec::new(),
-            soft_points
+            soft_points,
         }
     }
 
@@ -54,15 +52,13 @@ impl BlackJack {
         let player_points = self.player.get_cards_points();
         let dealer_points = self.dealer.get_cards_points();
 
-        let winner = match (player_points, dealer_points) {
+        match (player_points, dealer_points) {
             (p, _d) if p > 21 => GameRoundResult::PlayerBusted,
             (_p, d) if d > 21 => GameRoundResult::DealerBusted,
             (p, d) if p > d => GameRoundResult::PlayerWon,
             (p, d) if d > p => GameRoundResult::DealerWon,
             _ => GameRoundResult::Draw,
-        };
-
-        winner
+        }
     }
 
     pub fn player_hit_card(&mut self) {
@@ -148,10 +144,7 @@ impl BlackJack {
     }
 
     fn is_dealer_want_to_hit(&self) -> bool {
-        match self.dealer.get_cards_points() {
-            points if points < self.soft_points => true,
-            _ => false,
-        }
+        matches!(self.dealer.get_cards_points(), points if points < self.soft_points)
     }
 
     fn set_card_deck(&mut self) {

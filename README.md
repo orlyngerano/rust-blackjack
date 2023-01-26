@@ -6,13 +6,13 @@ Terminal based game.
 ## Usage
 
 
-##### Starts the game.
-```
+### Starts the game
+```bash
 % ./blackjack
 ```
 
-##### Show more options when running the game.
-```
+### Show more options when running the game
+```bash
 % ./blackjack --help
 ```
 
@@ -22,7 +22,7 @@ Follow Rust installation [Guide](https://www.rust-lang.org/tools/install)
 
 ## Building
 
-```
+```bash
 cargo build --release
 ```
 The built file is located in directory **target/release**.
@@ -30,6 +30,6 @@ The built file is located in directory **target/release**.
 
 ## Testing
 
-```
+```bash
 cargo test
 ```
