@@ -2,12 +2,13 @@ use blackjack::game::{status::GameRoundResult, cards::Card, player::Player, blac
 
 #[test]
 fn player_wins(){
-    let player_name = String::from("Bob");
-    let dealer_name = String::from("Alice");
+    let player_name = String::from("Bob 1");
+    let dealer_name = String::from("Alice 1");
 
     let mut black_jack: BlackJack = BlackJack::new(Player::new(player_name.clone()),Player::new(dealer_name.clone()), DEFAULT_SOFTPOINTS);
     let player = black_jack.get_player();
     player.add_card(Card::ClubsTen);
+
     player.add_card(Card::HeartsTen);
 
     let dealer = black_jack.get_dealer();
@@ -23,8 +24,8 @@ fn player_wins(){
 
 #[test]
 fn dealer_wins(){
-    let player_name = String::from("Bob");
-    let dealer_name = String::from("Alice");
+    let player_name = String::from("Bob 2");
+    let dealer_name = String::from("Alice 2");
 
     let mut black_jack: BlackJack = BlackJack::new(Player::new(player_name.clone()),Player::new(dealer_name.clone()), DEFAULT_SOFTPOINTS);
     let player = black_jack.get_player();
@@ -45,8 +46,8 @@ fn dealer_wins(){
 
 #[test]
 fn player_wins_dealer_busted(){
-    let player_name = String::from("Bob");
-    let dealer_name = String::from("Alice");
+    let player_name = String::from("Bob 3");
+    let dealer_name = String::from("Alice 3");
 
     let mut black_jack: BlackJack = BlackJack::new(Player::new(player_name.clone()),Player::new(dealer_name.clone()), DEFAULT_SOFTPOINTS);
     let player = black_jack.get_player();
@@ -68,8 +69,8 @@ fn player_wins_dealer_busted(){
 
 #[test]
 fn dealer_wins_player_busted(){
-    let player_name = String::from("Bob");
-    let dealer_name = String::from("Alice");
+    let player_name = String::from("Bob 4");
+    let dealer_name = String::from("Alice 4");
 
     let mut black_jack: BlackJack = BlackJack::new(Player::new(player_name.clone()),Player::new(dealer_name.clone()), DEFAULT_SOFTPOINTS);
     let player = black_jack.get_player();
