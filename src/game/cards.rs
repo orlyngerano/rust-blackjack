@@ -114,5 +114,9 @@ pub fn get_card_name(card: &Card) -> String {
 pub fn get_card_value(card: &Card) -> u8 {
     let unmask_card: u8 = 0x0f & *card as u8;
 
-    if unmask_card > 10 { 10 } else { unmask_card }
+    if unmask_card > 10 {
+        10
+    } else {
+        unmask_card
+    }
 }
