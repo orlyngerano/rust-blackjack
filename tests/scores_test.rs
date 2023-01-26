@@ -5,16 +5,21 @@ use blackjack::game::{
     status::GameRoundResult,
 };
 
-#[test]
-fn player_wins() {
+fn init() -> BlackJack {
     let player_name = String::from("Bob 1");
     let dealer_name = String::from("Alice 1");
 
-    let mut black_jack: BlackJack = BlackJack::new(
+    BlackJack::new(
         Player::new(player_name.clone()),
         Player::new(dealer_name.clone()),
         DEFAULT_SOFTPOINTS,
-    );
+    )
+}
+
+#[test]
+fn player_wins() {
+    let mut black_jack = init();
+
     let player = black_jack.get_player();
     player.add_card(Card::ClubsTen);
 
@@ -32,16 +37,10 @@ fn player_wins() {
 
 #[test]
 fn dealer_wins() {
-    let player_name = String::from("Bob 2");
-    let dealer_name = String::from("Alice 2");
-
-    let mut black_jack: BlackJack = BlackJack::new(
-        Player::new(player_name.clone()),
-        Player::new(dealer_name.clone()),
-        DEFAULT_SOFTPOINTS,
-    );
+    let mut black_jack = init();
     let player = black_jack.get_player();
     player.add_card(Card::DiamondsTen);
+
     player.add_card(Card::DiamondsFive);
     player.add_card(Card::DiamondsTwo);
 
@@ -56,14 +55,7 @@ fn dealer_wins() {
 
 #[test]
 fn player_wins_dealer_busted() {
-    let player_name = String::from("Bob 3");
-    let dealer_name = String::from("Alice 3");
-
-    let mut black_jack: BlackJack = BlackJack::new(
-        Player::new(player_name.clone()),
-        Player::new(dealer_name.clone()),
-        DEFAULT_SOFTPOINTS,
-    );
+    let mut black_jack = init();
     let player = black_jack.get_player();
     player.add_card(Card::ClubsTen);
     player.add_card(Card::HeartsAce);
@@ -80,14 +72,7 @@ fn player_wins_dealer_busted() {
 
 #[test]
 fn dealer_wins_player_busted() {
-    let player_name = String::from("Bob 4");
-    let dealer_name = String::from("Alice 4");
-
-    let mut black_jack: BlackJack = BlackJack::new(
-        Player::new(player_name.clone()),
-        Player::new(dealer_name.clone()),
-        DEFAULT_SOFTPOINTS,
-    );
+    let mut black_jack = init();
     let player = black_jack.get_player();
     player.add_card(Card::ClubsTen);
     player.add_card(Card::DiamondsTen);
