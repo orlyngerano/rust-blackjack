@@ -1,3 +1,4 @@
+use colored::Colorize;
 use std::io;
 
 use crate::game::{
@@ -66,7 +67,11 @@ impl BlackJackConsole {
     }
 
     fn ask_player_play_to_hit_or_stand() -> bool {
-        println!("Press 'h' for Hit and 's' for Stand");
+        println!(
+            "Press '{}' for Hit and '{}' for Stand",
+            "h".yellow(),
+            "s".yellow()
+        );
 
         let stdin = io::stdin();
         let input = &mut String::new();
@@ -84,7 +89,11 @@ impl BlackJackConsole {
     }
 
     fn ask_player_play() -> bool {
-        println!("Want to continue play? Press 'y' for yes and 'n' for no.");
+        println!(
+            "Want to continue play? Press '{}' for yes and '{}' for no.",
+            "y".green(),
+            "n".red()
+        );
 
         let stdin = io::stdin();
         let input = &mut String::new();
@@ -104,15 +113,21 @@ impl BlackJackConsole {
     fn show_greetings(&mut self) {
         println!(
             r#"
----------------
-Black Jack Game
----------------
-"#
+{}
+{}
+{}
+"#,
+            "---------------".purple(),
+            "Black Jack Game".purple(),
+            "---------------".purple()
         );
-        println!("Welcome {}", self.black_jack.get_player().get_name());
+        println!(
+            "Welcome {}",
+            self.black_jack.get_player().get_name().green()
+        );
         println!(
             "I am will be dealer. My name is {}.\n",
-            self.black_jack.get_dealer().get_name()
+            self.black_jack.get_dealer().get_name().red()
         );
     }
 
@@ -129,28 +144,56 @@ Black Jack Game
             acc.push_str(&format!(
                 "{} {}\n",
                 cards::get_card_name(x),
-                cards::get_card_value(x)
+                cards::get_card_value(x).to_string().green()
             ));
             acc
         });
-        println!("{}", message);
+        let total_message = format!(
+            "Total: {}",
+            self.black_jack
+                .get_player()
+                .get_cards_points()
+                .to_string()
+                .green()
+        );
+        println!("{}{}\n", message, total_message);
     }
 
     fn show_game_round_result_message(&mut self) {
         println!("-----Game Result-----");
 
         let winner = match self.black_jack.get_winner() {
-            GameRoundResult::PlayerBusted => "Player busted. Dealer Wins".to_string(),
-            GameRoundResult::DealerBusted => "Dealer busted. Player Wins".to_string(),
+            GameRoundResult::PlayerBusted => {
+                "Player busted. Dealer Wins".to_string().red().to_string()
+            }
+            GameRoundResult::DealerBusted => {
+                "Dealer busted. Player Wins".to_string().green().to_string()
+            }
             GameRoundResult::PlayerWon => format!(
                 "Player won. Player:{}  Dealer:{}",
-                self.black_jack.get_player().get_cards_points(),
-                self.black_jack.get_dealer().get_cards_points()
+                self.black_jack
+                    .get_player()
+                    .get_cards_points()
+                    .to_string()
+                    .green(),
+                self.black_jack
+                    .get_dealer()
+                    .get_cards_points()
+                    .to_string()
+                    .red()
             ),
             GameRoundResult::DealerWon => format!(
                 "Dealer won. Dealer:{}  Player:{}",
-                self.black_jack.get_dealer().get_cards_points(),
-                self.black_jack.get_player().get_cards_points()
+                self.black_jack
+                    .get_dealer()
+                    .get_cards_points()
+                    .to_string()
+                    .red(),
+                self.black_jack
+                    .get_player()
+                    .get_cards_points()
+                    .to_string()
+                    .green()
             ),
             GameRoundResult::Draw => format!(
                 "Draw. Dealer:{}  Player:{}",
