@@ -35,4 +35,4 @@ cargo test
 ```
 
 ## Screenshot
-![SigScreenshotn](/images/screenshot.png)
+![Screenshot](/images/screenshot.png)
