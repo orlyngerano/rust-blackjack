@@ -3,7 +3,7 @@ use std::io;
 
 use crate::game::{
     blackjack::BlackJack,
-    cards,
+    cards::{self, print_cards},
     player::Player,
     status::{GameRoundResult, State},
 };
@@ -148,6 +148,9 @@ impl BlackJackConsole {
             ));
             acc
         });
+
+        print_cards(player_cards);
+
         let total_message = format!(
             "Total: {}",
             self.black_jack

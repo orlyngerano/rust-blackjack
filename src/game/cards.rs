@@ -1,3 +1,5 @@
+use colored::Colorize;
+
 #[derive(Copy, Clone)]
 pub enum Card {
     ClubsAce = 0x01,
@@ -118,5 +120,58 @@ pub fn get_card_value(card: &Card) -> u8 {
         10
     } else {
         unmask_card
+    }
+}
+
+pub fn get_card_display(card: &Card) -> Vec<String> {
+    let suit = match *card as u8 {
+        1..=13 => "\u{2663}".to_string(),
+        17..=29 => format!("{}","\u{2666}".red()),
+        33..=45 => format!("{}","\u{2665}".red()),
+        49..=61 => "\u{2660}".to_string(),
+        _ => "".to_string(),
+    };
+
+    let rank = match card {
+        Card::ClubsAce
+        | Card::DiamondsAce
+        | Card::HeartsAce
+        | Card::SpadesAce => "A".to_string(),
+        Card::ClubsJack
+        | Card::DiamondsJack
+        | Card::HeartsJack
+        | Card::SpadesJack => "J".to_string(),
+        Card::ClubsQueen
+        | Card::DiamondsQueen
+        | Card::HeartsQueen
+        | Card::SpadesQueen => "Q".to_string(),
+        Card::ClubsKing
+        | Card::DiamondsKing
+        | Card::HeartsKing
+        | Card::SpadesKing => "K".to_string(),
+        _ => get_card_value(card).to_string(),
+    };
+
+    let rank_width = rank.len();
+
+    vec![
+        "┌─────────┐".to_string(),
+        format!("│{}{}│", rank, " ".repeat(9 - rank_width)),
+        "│         │".to_string(),
+        format!("│    {}    │", suit),
+        "│         │".to_string(),
+        format!("│{}{}│", " ".repeat(9 - rank_width), rank),
+        "└─────────┘".to_string(),
+    ]
+}
+
+pub fn print_cards(cards: &[Card]) {
+    let ascii_cards: Vec<Vec<String>> = cards.iter().map(|c| get_card_display(c)).collect();
+
+    for row in 0..ascii_cards[0].len() {
+        for card in &ascii_cards {
+            print!("{}  ", card[row]);
+        }
+        println!();
     }
 }
