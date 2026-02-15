@@ -7,9 +7,9 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(name: String) -> Player {
+    pub fn new(name: impl Into<String>) -> Player {
         Player {
-            name,
+            name: name.into(),
             cards: Vec::new(),
             bet_on_cards: false,
         }
@@ -23,20 +23,17 @@ impl Player {
         self.cards.clear();
     }
 
-    pub fn get_cards(&self) -> &Vec<cards::Card> {
+    pub fn get_cards(&self) -> &[cards::Card] {
         &self.cards
     }
 
     pub fn get_cards_points(&self) -> u8 {
-        let points = self
-            .cards
+        self.cards
             .iter()
-            .fold(0, |acc, x| acc + cards::get_card_value(x));
-
-        points
+            .fold(0, |acc, x| acc + cards::get_card_value(x))
     }
 
-    pub fn get_name(&self) -> &String {
+    pub fn get_name(&self) -> &str {
         &self.name
     }
 

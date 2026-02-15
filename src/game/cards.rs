@@ -56,116 +56,85 @@ pub enum Card {
     SpadesKing = 0x3D,
 }
 
+fn get_suit(card: Card) -> u8 {
+    (card as u8) >> 4
+}
+
+fn get_rank(card: Card) -> u8 {
+    (card as u8) & 0x0F
+}
+
 pub fn get_card_name(card: &Card) -> String {
-    match card {
-        Card::ClubsAce => String::from("ace of Clubs"),
-        Card::ClubsTwo => String::from("two of Clubs"),
-        Card::ClubsThree => String::from("three of Clubs"),
-        Card::ClubsFour => String::from("four of Clubs"),
-        Card::ClubsFive => String::from("five of Clubs"),
-        Card::ClubsSix => String::from("six of Clubs"),
-        Card::ClubsSeven => String::from("seven of Clubs"),
-        Card::ClubsEight => String::from("eight of Clubs"),
-        Card::ClubsNine => String::from("nine of Clubs"),
-        Card::ClubsTen => String::from("ten of Clubs"),
-        Card::ClubsJack => String::from("jack of Clubs"),
-        Card::ClubsQueen => String::from("queen of Clubs"),
-        Card::ClubsKing => String::from("king of Clubs"),
-        Card::DiamondsAce => String::from("ace of Diamonds"),
-        Card::DiamondsTwo => String::from("two of Diamonds"),
-        Card::DiamondsThree => String::from("three of Diamonds"),
-        Card::DiamondsFour => String::from("four of Diamonds"),
-        Card::DiamondsFive => String::from("five of Diamonds"),
-        Card::DiamondsSix => String::from("six of Diamonds"),
-        Card::DiamondsSeven => String::from("seven of Diamonds"),
-        Card::DiamondsEight => String::from("eight of Diamonds"),
-        Card::DiamondsNine => String::from("nine of Diamonds"),
-        Card::DiamondsTen => String::from("ten of Diamonds"),
-        Card::DiamondsJack => String::from("jack of Diamonds"),
-        Card::DiamondsQueen => String::from("queen of Diamonds"),
-        Card::DiamondsKing => String::from("king of Diamonds"),
-        Card::HeartsAce => String::from("ace of Hearts"),
-        Card::HeartsTwo => String::from("two of Hearts"),
-        Card::HeartsThree => String::from("three of Hearts"),
-        Card::HeartsFour => String::from("four of Hearts"),
-        Card::HeartsFive => String::from("five of Hearts"),
-        Card::HeartsSix => String::from("six of Hearts"),
-        Card::HeartsSeven => String::from("seven of Hearts"),
-        Card::HeartsEight => String::from("eight of Hearts"),
-        Card::HeartsNine => String::from("nine of Hearts"),
-        Card::HeartsTen => String::from("ten of Hearts"),
-        Card::HeartsJack => String::from("jack of Hearts"),
-        Card::HeartsQueen => String::from("queen of Hearts"),
-        Card::HeartsKing => String::from("king of Hearts"),
-        Card::SpadesAce => String::from("ace of Spades"),
-        Card::SpadesTwo => String::from("two of Spades"),
-        Card::SpadesThree => String::from("three of Spades"),
-        Card::SpadesFour => String::from("four of Spades"),
-        Card::SpadesFive => String::from("five of Spades"),
-        Card::SpadesSix => String::from("six of Spades"),
-        Card::SpadesSeven => String::from("seven of Spades"),
-        Card::SpadesEight => String::from("eight of Spades"),
-        Card::SpadesNine => String::from("nine of Spades"),
-        Card::SpadesTen => String::from("ten of Spades"),
-        Card::SpadesJack => String::from("jack of Spades"),
-        Card::SpadesQueen => String::from("queen of Spades"),
-        Card::SpadesKing => String::from("king of Spades"),
-    }
+    let rank_name = match get_rank(*card) {
+        1 => "ace",
+        2 => "two",
+        3 => "three",
+        4 => "four",
+        5 => "five",
+        6 => "six",
+        7 => "seven",
+        8 => "eight",
+        9 => "nine",
+        10 => "ten",
+        11 => "jack",
+        12 => "queen",
+        13 => "king",
+        _ => "unknown",
+    };
+
+    let suit_name = match get_suit(*card) {
+        0 => "Clubs",
+        1 => "Diamonds",
+        2 => "Hearts",
+        3 => "Spades",
+        _ => "unknown",
+    };
+
+    format!("{} of {}", rank_name, suit_name)
 }
 
 pub fn get_card_value(card: &Card) -> u8 {
-    let unmask_card: u8 = 0x0f & *card as u8;
-
-    if unmask_card > 10 {
-        10
-    } else {
-        unmask_card
+    let rank = get_rank(*card);
+    match rank {
+        1 => 11,
+        11..=13 => 10,
+        n => n,
     }
 }
 
 pub fn get_card_display(card: &Card) -> Vec<String> {
-    let suit = match *card as u8 {
-        1..=13 => "\u{2663}".to_string(),
-        17..=29 => format!("{}","\u{2666}".red()),
-        33..=45 => format!("{}","\u{2665}".red()),
-        49..=61 => "\u{2660}".to_string(),
+    let suit = match get_suit(*card) {
+        0 => "\u{2663}".to_string(),
+        1 => format!("{}", "\u{2666}".red()),
+        2 => format!("{}", "\u{2665}".red()),
+        3 => "\u{2660}".to_string(),
         _ => "".to_string(),
     };
 
-    let rank = match card {
-        Card::ClubsAce
-        | Card::DiamondsAce
-        | Card::HeartsAce
-        | Card::SpadesAce => "A".to_string(),
-        Card::ClubsJack
-        | Card::DiamondsJack
-        | Card::HeartsJack
-        | Card::SpadesJack => "J".to_string(),
-        Card::ClubsQueen
-        | Card::DiamondsQueen
-        | Card::HeartsQueen
-        | Card::SpadesQueen => "Q".to_string(),
-        Card::ClubsKing
-        | Card::DiamondsKing
-        | Card::HeartsKing
-        | Card::SpadesKing => "K".to_string(),
-        _ => get_card_value(card).to_string(),
+    let rank = match get_rank(*card) {
+        1 => "A".to_string(),
+        11 => "J".to_string(),
+        12 => "Q".to_string(),
+        13 => "K".to_string(),
+        n => n.to_string(),
     };
-
-    let rank_width = rank.len();
 
     vec![
         "┌─────────┐".to_string(),
-        format!("│{}{}│", rank, " ".repeat(9 - rank_width)),
+        format!("│{:<9}│", rank),
         "│         │".to_string(),
         format!("│    {}    │", suit),
         "│         │".to_string(),
-        format!("│{}{}│", " ".repeat(9 - rank_width), rank),
+        format!("│{:>9}│", rank),
         "└─────────┘".to_string(),
     ]
 }
 
 pub fn print_cards(cards: &[Card]) {
+    if cards.is_empty() {
+        return;
+    }
+
     let ascii_cards: Vec<Vec<String>> = cards.iter().map(|c| get_card_display(c)).collect();
 
     for row in 0..ascii_cards[0].len() {

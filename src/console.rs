@@ -139,7 +139,7 @@ impl BlackJackConsole {
     }
 
     fn show_player_card_message(&mut self) {
-        let player_cards: &Vec<cards::Card> = self.black_jack.get_player().get_cards();
+        let player_cards = self.black_jack.get_player().get_cards();
         let message = player_cards.iter().fold(String::new(), |mut acc, x| {
             acc.push_str(&format!(
                 "{} {}\n",
