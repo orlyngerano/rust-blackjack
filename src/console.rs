@@ -38,20 +38,16 @@ impl BlackJackConsole {
     }
 
     fn game_session_loop(&mut self) {
-        loop {
-            match *self.black_jack.get_state() {
-                State::GameEnd => break,
-                _ => match BlackJackConsole::ask_player_play() {
-                    true => {
-                        self.black_jack.start_game_round();
+        while *self.black_jack.get_state() != State::GameEnd {
+            if BlackJackConsole::ask_player_play() {
+                self.black_jack.start_game_round();
 
-                        self.game_round_loop();
+                self.game_round_loop();
 
-                        self.show_player_card_message();
-                        self.show_game_round_result_message();
-                    }
-                    false => self.black_jack.end_game(),
-                },
+                self.show_player_card_message();
+                self.show_game_round_result_message();
+            } else {
+                self.black_jack.end_game();
             }
         }
     }
@@ -74,18 +70,22 @@ impl BlackJackConsole {
         );
 
         let stdin = io::stdin();
-        let input = &mut String::new();
+        let mut input = String::new();
 
-        input.clear();
-        stdin.read_line(input).expect("ooops");
+        loop {
+            input.clear();
+            stdin.read_line(&mut input).expect("ooops");
 
-        let choiced = match input.trim() {
-            "h" | "H" => true,
-            "s" | "S" => false,
-            _ => BlackJackConsole::ask_player_play_to_hit_or_stand(),
-        };
-
-        choiced
+            match input.trim().to_lowercase().as_str() {
+                "h" => return true,
+                "s" => return false,
+                _ => println!(
+                    "Press '{}' for Hit and '{}' for Stand",
+                    "h".yellow(),
+                    "s".yellow()
+                ),
+            }
+        }
     }
 
     fn ask_player_play() -> bool {
@@ -96,18 +96,22 @@ impl BlackJackConsole {
         );
 
         let stdin = io::stdin();
-        let input = &mut String::new();
+        let mut input = String::new();
 
-        input.clear();
-        stdin.read_line(input).expect("oops");
+        loop {
+            input.clear();
+            stdin.read_line(&mut input).expect("oops");
 
-        let choiced = match input.trim() {
-            "n" | "N" => false,
-            "y" | "Y" => true,
-            _ => BlackJackConsole::ask_player_play(),
-        };
-
-        choiced
+            match input.trim().to_lowercase().as_str() {
+                "n" => return false,
+                "y" => return true,
+                _ => println!(
+                    "Want to continue play? Press '{}' for yes and '{}' for no.",
+                    "y".green(),
+                    "n".red()
+                ),
+            }
+        }
     }
 
     fn show_greetings(&mut self) {
