@@ -1,7 +1,5 @@
-extern crate rand;
-
 use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::rng;
 
 use super::cards;
 use super::player::Player;
@@ -53,8 +51,8 @@ impl BlackJack {
         let dealer_points = self.dealer.get_cards_points();
 
         match (player_points, dealer_points) {
-            (p, _d) if p > 21 => GameRoundResult::PlayerBusted,
-            (_p, d) if d > 21 => GameRoundResult::DealerBusted,
+            (p, _) if p > 21 => GameRoundResult::PlayerBusted,
+            (_, d) if d > 21 => GameRoundResult::DealerBusted,
             (p, d) if p > d => GameRoundResult::PlayerWon,
             (p, d) if d > p => GameRoundResult::DealerWon,
             _ => GameRoundResult::Draw,
@@ -68,8 +66,9 @@ impl BlackJack {
 
         let card: cards::Card = self.get_next_card_from_deck();
         self.player.add_card(card);
-        self.state = State::DealerTurn;
-        self.dealers_turn();
+        if self.player.get_cards_points() > 21 {
+            self.end_game_round();
+        }
     }
 
     pub fn player_stand(&mut self) {
@@ -94,12 +93,11 @@ impl BlackJack {
 
         self.state = State::GameRoundStart;
 
-        for i in 1..=4 {
+        for _ in 0..2 {
             let card = self.get_next_card_from_deck();
-            match i % 2 {
-                0 => self.player.add_card(card),
-                _ => self.dealer.add_card(card),
-            }
+            self.player.add_card(card);
+            let card = self.get_next_card_from_deck();
+            self.dealer.add_card(card);
         }
 
         self.state = State::PlayerTurn;
@@ -115,32 +113,18 @@ impl BlackJack {
             return;
         }
 
-        if self.is_dealer_want_to_hit() {
+        while self.is_dealer_want_to_hit() {
             self.dealer_hit_card();
-        } else {
-            self.dealer.set_bet_on_cards(true);
         }
-
-        let dealer_points = self.dealer.get_cards_points();
-        let player_points = self.player.get_cards_points();
-        let is_player_betting = self.player.is_bet_on_cards();
-        let is_dealer_betting = self.dealer.is_bet_on_cards();
-
-        match (dealer_points, player_points) {
-            (d, p) if d > 21 || p > 21 => self.end_game_round(),
-            _ => match (is_player_betting, is_dealer_betting) {
-                (c, d) if c && d => self.end_game_round(),
-                (c, d) if c && !d => self.dealers_turn(),
-                _ => self.state = State::PlayerTurn,
-            },
-        }
+        self.dealer.set_bet_on_cards(true);
+        self.end_game_round();
     }
 
     fn get_next_card_from_deck(&mut self) -> cards::Card {
         if self.card_deck.is_empty() {
             self.set_card_deck();
         }
-        self.card_deck.remove(0)
+        self.card_deck.pop().unwrap()
     }
 
     fn is_dealer_want_to_hit(&self) -> bool {
@@ -211,7 +195,7 @@ impl BlackJack {
     }
 
     fn shuffle_deck(&mut self) {
-        let mut rng = thread_rng();
-        self.card_deck.shuffle(&mut rng);
+        let mut rng_instance = rng();
+        self.card_deck.shuffle(&mut rng_instance);
     }
 }
